@@ -54,10 +54,19 @@ public class GameService {
             String sqlCreateGameRecord = "CREATE TABLE IF NOT EXISTS `GameRecord` ( `gameId` TEXT NOT NULL, " +
                     "`moveRecord` TEXT NOT NULL )";
 
+            String sqlClearPlayerInfos = "DELETE FROM `PlayerInfos`";
+            String sqlClearPieceInfos = "DELETE FROM `PieceInfos`";
+            String sqlClearGameStatus = "DELETE FROM `GameStates`";
+            String sqlClearGameRecord = "DELETE FROM `GameRecord`";
+
             conn.createQuery(sqlCreatePlayerInfos).executeUpdate();
             conn.createQuery(sqlCreatePieceInfo).executeUpdate();
             conn.createQuery(sqlCreateGameStatus).executeUpdate();
             conn.createQuery(sqlCreateGameRecord).executeUpdate();
+            conn.createQuery(sqlClearPlayerInfos).executeUpdate();
+            conn.createQuery(sqlClearPieceInfos).executeUpdate();
+            conn.createQuery(sqlClearGameStatus).executeUpdate();
+            conn.createQuery(sqlClearGameRecord).executeUpdate();
         } catch(Sql2oException ex) {
             logger.error("Failed to create schema at startup", ex);
             throw new GameServiceException("Failed to create schema at startup", ex);
