@@ -70,11 +70,11 @@ public class GameService {
      * @return the gameId, playerId, pieceType
      */
     public PlayerInfo createGame(String body) throws GameServiceException {
-        if (!body.equals("HOUND") && !body.equals("HARE")) {
-            throw new GameServiceException("Malformed request!");
-        }
         UUID uuid = Generators.timeBasedGenerator().generate();
         PlayerInfo playerInfo = new Gson().fromJson(body, PlayerInfo.class);
+        if (!playerInfo.getPieceType().equals("HOUND") && !playerInfo.getPieceType().equals("HARE")) {
+            throw new GameServiceException("Malformed request!");
+        }
         playerInfo.setPlayerId(playerInfo.getPieceType() + "_player");
         playerInfo.setGameId(uuid.toString());
         // Insert the new game info into the database
