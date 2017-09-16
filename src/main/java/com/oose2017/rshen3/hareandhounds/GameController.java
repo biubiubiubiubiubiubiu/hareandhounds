@@ -96,7 +96,7 @@ public class GameController {
 
         post(API_PREFIX + "/:gameId" + "/turns", "application/json", (request, response) -> {
             try {
-                PlayerInfo playerInfo = gameService.makeMove(request.body());
+                PlayerInfo playerInfo = gameService.makeMove(request.body(), request.params("gameId"));
                 response.status(200);
                 return playerInfo;
             } catch (GameService.WrongGameIDException ex) {

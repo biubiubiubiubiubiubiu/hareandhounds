@@ -218,7 +218,7 @@ public class GameService {
         }
     }
 
-    public PlayerInfo makeMove(String body) throws WrongGameIDException,
+    public PlayerInfo makeMove(String body, String gameId) throws WrongGameIDException,
                                                    WrongPlayerIDException,
                                                    IncorrectTurn,
                                                    IllegalMove,
@@ -237,10 +237,9 @@ public class GameService {
                                         "AND moveRecord = :moveRecord";
         String sqlUpdatePieceStates = "INSERT INTO GameRecord (`gameId`, `moveRecord`) " +
                                         "VALUES(:gameId, :moveRecord)";
-        String sqlDeletePieceStates = "DELETE FROM GameRecord WHERE `gameId` = :gameId";
         try (Connection conn = db.open()) {
             String state = conn.createQuery(sqlFetchState)
-                                .addParameter("gameId", movePiece.getGameId())
+                                .addParameter("gameId", gameId)
                                 .executeScalar(String.class);
             if (state == null) {
                 // Wrong gameId
