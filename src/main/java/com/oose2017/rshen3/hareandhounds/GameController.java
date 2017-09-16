@@ -105,20 +105,23 @@ public class GameController {
                 return new ErrorReason(404, "INVALID_GAME_ID");
             } catch (GameService.WrongPlayerIDException ex) {
                 logger.error("Failed to make a move, incorrect playerId");
-                response.status(404);
-                return new ErrorReason(404, "INVALID_PLAYER_ID");
+                response.status(405);
+                return new ErrorReason(405, "INVALID_PLAYER_ID");
             } catch (GameService.IllegalMove ex) {
                 logger.error("Failed to make a move, illegal move");
                 response.status(422);
                 return new ErrorReason(422, "ILLEGAL_MOVE");
             } catch (GameService.IncorrectTurn ex) {
                 logger.error("Failed to make a move, incorrect turn");
-                response.status(422);
-                return new ErrorReason(422, "INCORRECT_TURN");
+                response.status(423);
+                return new ErrorReason(423, "INCORRECT_TURN");
             } catch (GameService.GameServiceException ex) {
                 logger.error("Failed to make a move.");
                 response.status(400);
                 return new ErrorReason(422, "BAD_REQUEST");
+            } catch (Exception e) {
+                response.status(401);
+                return new ErrorReason(401, "dont know");
             }
         }, new JsonTransformer());
     }
