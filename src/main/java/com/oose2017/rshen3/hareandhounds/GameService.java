@@ -70,6 +70,9 @@ public class GameService {
      * @return the gameId, playerId, pieceType
      */
     public PlayerInfo createGame(String body) throws GameServiceException {
+        if (!body.equals("HOUND") && !body.equals("HARE")) {
+            throw new GameServiceException("Malformed request!");
+        }
         UUID uuid = Generators.timeBasedGenerator().generate();
         PlayerInfo playerInfo = new Gson().fromJson(body, PlayerInfo.class);
         playerInfo.setPlayerId(playerInfo.getPieceType() + "_player");
@@ -319,6 +322,7 @@ public class GameService {
         public GameServiceException(String message, Throwable cause) {
             super(message, cause);
         }
+        public GameServiceException(String message) {super(message);}
     }
 
     /**
