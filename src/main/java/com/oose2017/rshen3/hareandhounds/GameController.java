@@ -5,6 +5,7 @@
 
 package com.oose2017.rshen3.hareandhounds;
 
+import com.oose2017.rshen3.hareandhounds.model.ErrorReason;
 import com.oose2017.rshen3.hareandhounds.model.GameState;
 import com.oose2017.rshen3.hareandhounds.model.PieceInfo;
 import com.oose2017.rshen3.hareandhounds.model.PlayerInfo;
@@ -101,23 +102,23 @@ public class GameController {
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to make a move: gameId does not exist!");
                 response.status(404);
-                return ("INVALID_GAME_ID");
+                return new ErrorReason(404, "INVALID_GAME_ID");
             } catch (GameService.WrongPlayerIDException ex) {
                 logger.error("Failed to make a move, incorrect playerId");
                 response.status(404);
-                return ("INVALID_PLAYER_ID");
+                return new ErrorReason(404, "INVALID_PLAYER_ID");
             } catch (GameService.IllegalMove ex) {
                 logger.error("Failed to make a move, illegal move");
                 response.status(422);
-                return ("ILLEGAL_MOVE");
+                return new ErrorReason(422, "ILLEGAL_MOVE");
             } catch (GameService.IncorrectTurn ex) {
                 logger.error("Failed to make a move, incorrect turn");
                 response.status(422);
-                return ("INCORRECT_TURN");
+                return new ErrorReason(422, "INCORRECT_TURN");
             } catch (GameService.GameServiceException ex) {
                 logger.error("Failed to make a move.");
                 response.status(400);
-                return ("BAD_REQUEST");
+                return new ErrorReason(422, "BAD_REQUEST");
             }
         }, new JsonTransformer());
     }
