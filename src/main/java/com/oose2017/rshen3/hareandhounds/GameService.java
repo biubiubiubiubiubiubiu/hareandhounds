@@ -135,7 +135,7 @@ public class GameService {
         String sqlInsertPieceStates = "INSERT INTO GameRecord (`gameId`, `moveRecord`) " +
                                 "VALUES (:gameId, :moveRecord)";
         try (Connection conn = db.open()) {
-            // Validate the join game requese
+            // Validate the join game request
             List<PlayerInfo> playerInfos = conn.createQuery(sqlFetchPlayers)
                                                 .bind(newPlayer)
                                                 .executeAndFetch(PlayerInfo.class);
@@ -208,7 +208,7 @@ public class GameService {
                                                 .addParameter("gameId", gameId)
                                                 .executeAndFetch(PieceInfo.class);
             if (pieceInfos.size() < 4) {
-                logger.info("GameService.fetchBoard: Wrong gameId");
+                logger.error("GameService.fetchBoard: Wrong gameId");
                 throw new WrongGameIDException("GameService.fetchBoard: Wrong gameId");
             }
             return pieceInfos;
@@ -218,7 +218,7 @@ public class GameService {
         }
     }
 
-    public PlayerInfo makeMove(String body, String gameId) throws WrongGameIDException,
+    public PlayerInfo makeMove(String body) throws WrongGameIDException,
                                                    WrongPlayerIDException,
                                                    IncorrectTurn,
                                                    IllegalMove,
@@ -239,7 +239,7 @@ public class GameService {
                                         "VALUES(:gameId, :moveRecord)";
         try (Connection conn = db.open()) {
             String state = conn.createQuery(sqlFetchState)
-                                .addParameter("gameId", gameId)
+                                .addParameter("gameId", movePiece.getGameId())
                                 .executeScalar(String.class);
             if (state == null) {
                 // Wrong gameId
