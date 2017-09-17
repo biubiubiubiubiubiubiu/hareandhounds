@@ -219,12 +219,13 @@ public class GameService {
         }
     }
 
-    public String makeMove(String body) throws WrongGameIDException,
+    public String makeMove(String body, String gameId) throws WrongGameIDException,
                                                    WrongPlayerIDException,
                                                    IncorrectTurn,
                                                    IllegalMove,
                                                    GameServiceException {
         MovePiece movePiece = new Gson().fromJson(body, MovePiece.class);
+        movePiece.setGameId(gameId);
         PlayerInfo playerInfo = new Gson().fromJson(body, PlayerInfo.class);
         String playerId = movePiece.getPlayerId();
         // Validate the move

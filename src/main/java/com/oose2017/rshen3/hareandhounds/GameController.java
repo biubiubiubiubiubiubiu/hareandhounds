@@ -97,7 +97,7 @@ public class GameController {
         post(API_PREFIX + "/:gameId" + "/turns", "application/json", (request, response) -> {
             HashMap<String, String> errorMap = new HashMap<>();
             try {
-                String playerId = gameService.makeMove(request.body());
+                String playerId = gameService.makeMove(request.body(), request.params("gameId"));
                 HashMap<String, String> map = new HashMap<>();
                 map.put("playerId", playerId);
                 response.status(200);
