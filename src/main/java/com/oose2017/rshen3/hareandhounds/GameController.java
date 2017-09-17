@@ -127,6 +127,10 @@ public class GameController {
                 response.status(400);
                 errorMap.put("reason", "BAD_REQUEST");
                 return errorMap;
+            } catch (Exception ex) {
+                response.status(501);
+                errorMap.put("reason", "UNCAUGHT_ERROR");
+                return errorMap;
             }
         }, new JsonTransformer());
     }
