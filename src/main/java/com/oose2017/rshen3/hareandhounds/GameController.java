@@ -104,8 +104,8 @@ public class GameController {
                 return map;
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to make a move: gameId does not exist!");
-                response.status(407);
-                return new ErrorReason(407, "INVALID_GAME_ID");
+                response.status(404);
+                return new ErrorReason(404, "INVALID_GAME_ID");
             } catch (GameService.WrongPlayerIDException ex) {
                 logger.error("Failed to make a move, incorrect playerId");
                 response.status(404);
