@@ -271,16 +271,17 @@ public class GameService {
                     throw new IllegalMove("GameService.makeMove: the destination for that piece is occupied!");
                 }
             }
-            if (!pieceType.equals(changePiece.getPieceType())) {
-                // Player picked the wrong piece.
-                logger.error("GameService.makeMove: you have picked the wrong piece!");
-                throw new IllegalMove("GameService.makeMove: you have picked the wrong piece!");
-            }
             if (notFound) {
                 // Meaning that the moving piece has a wrong location.
                 logger.error("GameService.makeMove: Wrong piece for the from location!");
                 throw new IllegalMove("GameService.makeMove: Wrong piece for the from location!");
             }
+            if (!pieceType.equals(changePiece.getPieceType())) {
+                // Player picked the wrong piece.
+                logger.error("GameService.makeMove: you have picked the wrong piece!");
+                throw new IllegalMove("GameService.makeMove: you have picked the wrong piece!");
+            }
+
             // Validate the "to" location
             if (BoardHelper.validateMove(pieceType, movePiece.getFromX(),
                                                 movePiece.getFromY(),
