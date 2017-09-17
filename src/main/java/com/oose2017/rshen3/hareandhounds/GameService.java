@@ -6,10 +6,7 @@
 package com.oose2017.rshen3.hareandhounds;
 import com.fasterxml.uuid.Generators;
 import com.google.gson.Gson;
-import com.oose2017.rshen3.hareandhounds.model.GameState;
-import com.oose2017.rshen3.hareandhounds.model.MovePiece;
-import com.oose2017.rshen3.hareandhounds.model.PieceInfo;
-import com.oose2017.rshen3.hareandhounds.model.PlayerInfo;
+import com.oose2017.rshen3.hareandhounds.model.*;
 import com.oose2017.rshen3.hareandhounds.utils.BoardHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,24 +181,24 @@ public class GameService {
         }
     }
 
-    public GameState fetchState(String gameId) throws WrongGameIDException, GameServiceException{
-        String sqlFetchStatus = "SELECT * FROM GameStates WHERE gameId = :gameId";
+    public String fetchState(String gameId) throws WrongGameIDException, GameServiceException{
+        String sqlFetchStatus = "SELECT state FROM GameStates WHERE gameId = :gameId";
         try (Connection conn = db.open()) {
-            List<GameState> gameStates = conn.createQuery(sqlFetchStatus)
+            String gameState = conn.createQuery(sqlFetchStatus)
                     .addParameter("gameId", gameId)
-                    .executeAndFetch(GameState.class);
-            if (gameStates.size() == 0) {
+                    .executeScalar(String.class);
+            if (gameState == null || gameState.length() == 0) {
                 logger.error("GameService.fetchStatus: Wrong gameId");
                 throw new WrongGameIDException("GameService.fetchStatus: Wrong gameId");
             }
-            return gameStates.get(0);
+            return gameState;
         } catch (Sql2oException ex) {
             logger.error("GameService.fetchStatus: Failed to query database to fetch state", ex);
             throw new GameServiceException("GameService.fetchStatus: Failed to query database to fetch state", ex);
         }
     }
 
-    public List<PieceInfo> fetchBoard(String gameId) throws WrongGameIDException, GameServiceException{
+    public List<PieceInfoRet> fetchBoard(String gameId) throws WrongGameIDException, GameServiceException{
         String sqlFetchBoard = "SELECT * FROM PieceInfos WHERE gameId = :gameId";
         try (Connection conn = db.open()) {
             List<PieceInfo> pieceInfos = conn.createQuery(sqlFetchBoard)
@@ -211,7 +208,11 @@ public class GameService {
                 logger.error("GameService.fetchBoard: Wrong gameId");
                 throw new WrongGameIDException("GameService.fetchBoard: Wrong gameId");
             }
-            return pieceInfos;
+            List<PieceInfoRet> pieceInfoRetList = new LinkedList<>();
+            for (PieceInfo pieceInfo: pieceInfos) {
+                pieceInfoRetList.add(new PieceInfoRet(pieceInfo));
+            }
+            return pieceInfoRetList;
         } catch (Sql2oException ex) {
             logger.error("GameService.fetchBoard: Failed to query database to fetch board", ex);
             throw new GameServiceException("GameService.fetchBoard: Failed to query database to fetch board", ex);

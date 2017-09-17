@@ -5,10 +5,7 @@
 
 package com.oose2017.rshen3.hareandhounds;
 
-import com.oose2017.rshen3.hareandhounds.model.ErrorReason;
-import com.oose2017.rshen3.hareandhounds.model.GameState;
-import com.oose2017.rshen3.hareandhounds.model.PieceInfo;
-import com.oose2017.rshen3.hareandhounds.model.PlayerInfo;
+import com.oose2017.rshen3.hareandhounds.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +64,11 @@ public class GameController {
 
         get(API_PREFIX + "/:gameId" + "/state", "application/json", (request, response) -> {
             try {
-                GameState gameState = gameService.fetchState(request.params("gameId"));
+                HashMap<String, String> map = new HashMap<>();
+                String gameState = gameService.fetchState(request.params("gameId"));
                 response.status(200);
-                return gameState;
+                map.put("state", gameState);
+                return map;
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to fetch game state: gameId does not exist!");
                 response.status(404);
@@ -82,9 +81,9 @@ public class GameController {
 
         get(API_PREFIX + "/:gameId" + "/board", "application/json", (request, response) -> {
             try {
-                List<PieceInfo> pieceInfoList = gameService.fetchBoard(request.params("gameId"));
+                List<PieceInfoRet> pieceInfoRetList = gameService.fetchBoard(request.params("gameId"));
                 response.status(200);
-                return pieceInfoList;
+                return pieceInfoRetList;
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to fetch game board: gameId does not exist!");
                 response.status(404);
@@ -96,6 +95,7 @@ public class GameController {
         }, new JsonTransformer());
 
         post(API_PREFIX + "/:gameId" + "/turns", "application/json", (request, response) -> {
+            HashMap<String, String> errorMap = new HashMap<>();
             try {
                 String playerId = gameService.makeMove(request.body());
                 HashMap<String, String> map = new HashMap<>();
@@ -105,23 +105,28 @@ public class GameController {
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to make a move: gameId does not exist!");
                 response.status(404);
-                return new ErrorReason(404, "INVALID_GAME_ID");
+                errorMap.put("reason", "INVALID_GAME_ID");
+                return errorMap;
             } catch (GameService.WrongPlayerIDException ex) {
                 logger.error("Failed to make a move, incorrect playerId");
                 response.status(404);
-                return new ErrorReason(404, "INVALID_PLAYER_ID");
+                errorMap.put("reason", "INVALID_PLAYER_ID");
+                return errorMap;
             } catch (GameService.IllegalMove ex) {
                 logger.error("Failed to make a move, illegal move");
                 response.status(422);
-                return new ErrorReason(422, "ILLEGAL_MOVE");
+                errorMap.put("reason", "ILLEGAL_MOVE");
+                return errorMap;
             } catch (GameService.IncorrectTurn ex) {
                 logger.error("Failed to make a move, incorrect turn");
                 response.status(422);
-                return new ErrorReason(422, "INCORRECT_TURN");
+                errorMap.put("reason", "INCORRECT_TURN");
+                return errorMap;
             } catch (GameService.GameServiceException ex) {
                 logger.error("Failed to make a move.");
                 response.status(400);
-                return new ErrorReason(422, "BAD_REQUEST");
+                errorMap.put("reason", "BAD_REQUEST");
+                return errorMap;
             }
         }, new JsonTransformer());
     }
