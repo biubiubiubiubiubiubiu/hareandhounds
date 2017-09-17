@@ -218,7 +218,7 @@ public class GameService {
         }
     }
 
-    public PlayerInfo makeMove(String body) throws WrongGameIDException,
+    public String makeMove(String body) throws WrongGameIDException,
                                                    WrongPlayerIDException,
                                                    IncorrectTurn,
                                                    IllegalMove,
@@ -318,7 +318,7 @@ public class GameService {
                     .addParameter("state", judgeResult)
                     .addParameter("gameId", movePiece.getGameId())
                     .executeUpdate();
-            return playerInfo;
+            return playerId;
         } catch (Sql2oException ex) {
             logger.error("GameService.makeMove: Failed to query database to move piece", ex);
             throw new GameServiceException("GameService.makeMove: Failed to query database to move piece", ex);

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static spark.Spark.*;
@@ -96,9 +97,11 @@ public class GameController {
 
         post(API_PREFIX + "/:gameId" + "/turns", "application/json", (request, response) -> {
             try {
-                PlayerInfo playerInfo = gameService.makeMove(request.body());
+                String playerId = gameService.makeMove(request.body());
+                HashMap<String, String> map = new HashMap<>();
+                map.put("playerId", playerId);
                 response.status(200);
-                return playerInfo;
+                return map;
             } catch (GameService.WrongGameIDException ex) {
                 logger.error("Failed to make a move: gameId does not exist!");
                 response.status(407);
